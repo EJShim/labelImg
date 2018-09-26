@@ -1,4 +1,4 @@
-LabelImg
+LabelImg - DICOM
 ========
 
 .. image:: https://img.shields.io/pypi/v/labelimg.svg
