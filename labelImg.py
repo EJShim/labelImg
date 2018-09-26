@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+#Add Dicom Support
 import codecs
 import distutils.spawn
 import os.path
