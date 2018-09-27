@@ -7,7 +7,7 @@ labelImg.egg-info*
 
 *.pyc
 .*.swp
-
+.DS_Store
 build/
 dist/
 

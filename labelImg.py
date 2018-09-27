@@ -9,6 +9,8 @@ import platform
 import re
 import sys
 import subprocess
+import itk
+import numpy as np
 
 from functools import partial
 from collections import defaultdict
@@ -953,9 +955,12 @@ class MainWindow(QMainWindow, WindowMixin):
             filePath = self.settings.get(SETTING_FILENAME)
 
         # Make sure that filePath is a regular python string, rather than QString
-        filePath = ustr(filePath)
-
+        filePath = ustr(filePath)        
         unicodeFilePath = ustr(filePath)
+
+        print(filePath, unicodeFilePath)
+
+        
         # Tzutalin 20160906 : Add file list and dock to move faster
         # Highlight the file item
         if unicodeFilePath and self.fileListWidget.count() > 0:
@@ -981,11 +986,26 @@ class MainWindow(QMainWindow, WindowMixin):
             else:
                 # Load image:
                 # read data first and store for saving into label file.
-                self.imageData = read(unicodeFilePath, None)
+
+                #Get Data Extention..
+                extension = os.path.splitext(unicodeFilePath)[1]
+                
+                if extension == ".dcm":
+                    self.imageData = readDicom(unicodeFilePath)
+                else:
+                    self.imageData = read(unicodeFilePath, None)
+
                 self.labelFile = None
                 self.canvas.verified = False
 
-            image = QImage.fromData(self.imageData)
+
+            if type(self.imageData) == np.ndarray:
+                    
+                image = QImage(self.imageData, self.imageData.shape[0], self.imageData.shape[1],self.imageData.strides[0], QImage.Format_Indexed8)
+            else:
+                image = QImage.fromData(self.imageData)
+                print("not a ndarray")
+
             if image.isNull():
                 self.errorMessage(u'Error opening file',
                                   u"<p>Make sure <i>%s</i> is a valid image file." % unicodeFilePath)
@@ -1228,6 +1248,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def openNextImg(self, _value=False):
         # Proceding prev image without dialog if having any label
+
+
         if self.autoSaving.isChecked():
             if self.defaultSaveDir is not None:
                 if self.dirty is True:
@@ -1254,11 +1276,18 @@ class MainWindow(QMainWindow, WindowMixin):
             self.loadFile(filename)
 
     def openFile(self, _value=False):
+
+        print("open file triggered")
         if not self.mayContinue():
             return
         path = os.path.dirname(ustr(self.filePath)) if self.filePath else '.'
         formats = ['*.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
+        
+        #Add Dicom Support
+        formats.append("*.dcm")
+
         filters = "Image & Label files (%s)" % ' '.join(formats + ['*%s' % LabelFile.suffix])
+        print(formats)
         filename = QFileDialog.getOpenFileName(self, '%s - Choose Image or Label file' % __appname__, path, filters)
         if filename:
             if isinstance(filename, (tuple, list)):
@@ -1429,6 +1458,35 @@ def read(filename, default=None):
     except:
         return default
 
+def readDicom(filename, default=None):
+
+    #Image Type = Short
+    ImageType = itk.Image[itk.F, 3]
+
+    reader = itk.ImageSeriesReader[ImageType].New()
+    dicomIO = itk.GDCMImageIO.New()
+    reader.SetImageIO(dicomIO)
+    reader.SetFileName(filename)
+    reader.Update()
+
+    # Rescale Image Intensity 0 ~ 255
+    normalizer = itk.RescaleIntensityImageFilter[ImageType, ImageType].New()
+    normalizer.SetInput(reader.GetOutput())
+    normalizer.SetOutputMinimum(0)
+    normalizer.SetOutputMaximum(255)
+    normalizer.Update()
+    
+
+    buffer = itk.GetArrayFromImage(normalizer.GetOutput())
+    buffer = np.squeeze(buffer, axis=0)
+    buffer = buffer.astype(np.uint8)
+
+    print(buffer)
+    
+
+    #Resample
+
+    return buffer
 
 def get_main_app(argv=[]):
     """
