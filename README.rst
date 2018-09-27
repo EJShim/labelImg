@@ -1,19 +1,6 @@
 LabelImg - DICOM
-=================
+========
 
-Dicom support 추가함
-
-제대로 안 써보고 image import 에 끼워넣은 방식이라 문제가있을수도있음
-
-문제있으면 연락하면고치겠음
-
-
-# ![screen](demo/example.png)
-
-
-
-
-==================
 .. image:: https://img.shields.io/pypi/v/labelimg.svg
         :target: https://pypi.python.org/pypi/labelimg
 
