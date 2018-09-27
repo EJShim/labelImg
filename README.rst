@@ -1,8 +1,20 @@
-LabelImg - DICOM
+LabelImg - DICOM 
+
+===========
+
+수정 : Dicom Support 추가
+
+
+내용 : 
+    *.dcm 확장자 이미지 불러오기 가능
+    제대로 안 써보고 기능만 넣은거라 문제가 있을수있음.
+    dicom 이미지는 0~255 픽셀값으로 rescale 됨. 
+
+    문제가 있거나 image rescale 값을 수정하고 싶으면 알아서 하거나 나에게 연락하길바람
 
 
 .. image:: https://github.com/EJShim/labelImg/blob/master/demo/example.png
-     :alt: Demo Image
+     :alt: Dico image demo
 
 
 
