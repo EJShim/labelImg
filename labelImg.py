@@ -958,7 +958,7 @@ class MainWindow(QMainWindow, WindowMixin):
         filePath = ustr(filePath)        
         unicodeFilePath = ustr(filePath)
 
-        print(filePath, unicodeFilePath)
+        # print(filePath, unicodeFilePath)
 
         
         # Tzutalin 20160906 : Add file list and dock to move faster
@@ -1277,7 +1277,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def openFile(self, _value=False):
 
-        print("open file triggered")
+        # print("open file triggered")
         if not self.mayContinue():
             return
         path = os.path.dirname(ustr(self.filePath)) if self.filePath else '.'
@@ -1287,7 +1287,7 @@ class MainWindow(QMainWindow, WindowMixin):
         formats.append("*.dcm")
 
         filters = "Image & Label files (%s)" % ' '.join(formats + ['*%s' % LabelFile.suffix])
-        print(formats)
+        # print(formats)
         filename = QFileDialog.getOpenFileName(self, '%s - Choose Image or Label file' % __appname__, path, filters)
         if filename:
             if isinstance(filename, (tuple, list)):
@@ -1438,7 +1438,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.set_format(FORMAT_YOLO)
         tYoloParseReader = YoloReader(txtPath, self.image)
         shapes = tYoloParseReader.getShapes()
-        print (shapes)
+        # print (shapes)
         self.loadLabels(shapes)
         self.canvas.verified = tYoloParseReader.verified
 
@@ -1469,9 +1469,22 @@ def readDicom(filename, default=None):
     reader.SetFileName(filename)
     reader.Update()
 
+    #Clip -224 ~ 224
+    thresholder = itk.ThresholdImageFilter[ImageType].New()
+    thresholder.SetInput(reader.GetOutput())
+    thresholder.ThresholdBelow(-224)
+    thresholder.SetOutsideValue(-224)
+    thresholder.Update()
+
+    upperThresholder = itk.ThresholdImageFilter[ImageType].New()
+    upperThresholder.SetInput(thresholder.GetOutput())
+    upperThresholder.ThresholdAbove(224)
+    upperThresholder.SetOutsideValue(224)
+    upperThresholder.Update()
+
     # Rescale Image Intensity 0 ~ 255
     normalizer = itk.RescaleIntensityImageFilter[ImageType, ImageType].New()
-    normalizer.SetInput(reader.GetOutput())
+    normalizer.SetInput(upperThresholder.GetOutput())
     normalizer.SetOutputMinimum(0)
     normalizer.SetOutputMaximum(255)
     normalizer.Update()
@@ -1481,7 +1494,7 @@ def readDicom(filename, default=None):
     buffer = np.squeeze(buffer, axis=0)
     buffer = buffer.astype(np.uint8)
 
-    print(buffer)
+    # print(buffer)
     
 
     #Resample

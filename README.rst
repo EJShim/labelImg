@@ -12,6 +12,10 @@ LabelImg - DICOM
 
     문제가 있거나 image rescale 값을 수정하고 싶으면 알아서 하거나 나에게 연락하길바람
 
+    2018.10.08 : dicom 파일을 -224 ~ 224 로 clip 함. (-224 보다 작은값은 모두 -224, 224  보다 큰 값은 모두 224 로 threshold)
+
+    - 추후 할일 : mouse wheel 로 이미지 넘기기?
+
 
 .. image:: https://github.com/EJShim/labelImg/blob/master/demo/example.png
      :alt: Dico image demo
