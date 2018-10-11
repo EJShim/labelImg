@@ -238,8 +238,7 @@ class MainWindow(QMainWindow, WindowMixin):
         verify = action('&Verify Image', self.verifyImg,
                         'space', 'verify', u'Verify Image')
 
-        save = action('&Save', self.saveFile,
-                      'Ctrl+S', 'save', u'Save labels to file', enabled=False)
+        save = action('&Save', self.saveFile, 'Ctrl+S', 'save', u'Save labels to file', enabled=False)
 
         save_format = action('&PascalVOC', self.change_format,
                       'Ctrl+', 'format_voc', u'Change save format', enabled=True)
@@ -1107,7 +1106,7 @@ class MainWindow(QMainWindow, WindowMixin):
         settings[SETTING_FILL_COLOR] = self.fillColor
         settings[SETTING_RECENT_FILES] = self.recentFiles
         settings[SETTING_ADVANCE_MODE] = not self._beginner
-        if self.defaultSaveDir and os.path.exists(self.defaultSaveDir):
+        if self.defaultSaveDir and os.path.exists(self.defaultSaveDir): 
             settings[SETTING_SAVE_DIR] = ustr(self.defaultSaveDir)
         else:
             settings[SETTING_SAVE_DIR] = ""
@@ -1129,8 +1128,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
-        extensions.append(".dcm")
-        print(extensions)
+        extensions.append(".dcm")        
         images = []
 
         for root, dirs, files in os.walk(folderPath):
@@ -1297,6 +1295,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.loadFile(filename)
 
     def saveFile(self, _value=False):
+        
         if self.defaultSaveDir is not None and len(ustr(self.defaultSaveDir)):
             if self.filePath:
                 imgFileName = os.path.basename(self.filePath)
@@ -1318,7 +1317,9 @@ class MainWindow(QMainWindow, WindowMixin):
     def saveFileDialog(self):
         caption = '%s - Choose File' % __appname__
         filters = 'File (*%s)' % LabelFile.suffix
-        openDialogPath = self.currentPath()
+                
+        openDialogPath = self.currentPath()        
+
         dlg = QFileDialog(self, caption, openDialogPath, filters)
         dlg.setDefaultSuffix(LabelFile.suffix[1:])
         dlg.setAcceptMode(QFileDialog.AcceptSave)
@@ -1326,7 +1327,7 @@ class MainWindow(QMainWindow, WindowMixin):
         dlg.selectFile(filenameWithoutExtension)
         dlg.setOption(QFileDialog.DontUseNativeDialog, False)
         if dlg.exec_():
-            fullFilePath = ustr(dlg.selectedFiles()[0])
+            fullFilePath = ustr(dlg.selectedFiles()[0])            
             return os.path.splitext(fullFilePath)[0] # Return file path without the extension.
         return ''
 

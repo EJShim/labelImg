@@ -101,6 +101,7 @@ class Canvas(QWidget):
         return self.hVertex is not None
 
     def mouseMoveEvent(self, ev):
+        
         """Update line with last point and current coordinates."""
         pos = self.transformPos(ev.pos())
 
@@ -136,7 +137,7 @@ class Canvas(QWidget):
             return
 
         # Polygon copy moving.
-        if Qt.RightButton & ev.buttons():
+        if Qt.RightButton & ev.buttons():            
             if self.selectedShapeCopy and self.prevPoint:
                 self.overrideCursor(CURSOR_MOVE)
                 self.boundedMoveShape(self.selectedShapeCopy, pos)
@@ -196,7 +197,9 @@ class Canvas(QWidget):
             self.overrideCursor(CURSOR_DEFAULT)
 
     def mousePressEvent(self, ev):
+
         pos = self.transformPos(ev.pos())
+
 
         if ev.button() == Qt.LeftButton:
             if self.drawing():
@@ -209,6 +212,9 @@ class Canvas(QWidget):
             self.selectShapePoint(pos)
             self.prevPoint = pos
             self.repaint()
+
+    def wheelEvent(self, ev):
+        print("entered")
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == Qt.RightButton:
