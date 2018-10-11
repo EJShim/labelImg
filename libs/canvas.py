@@ -23,6 +23,7 @@ CURSOR_GRAB = Qt.OpenHandCursor
 
 class Canvas(QWidget):
     zoomRequest = pyqtSignal(int)
+    nextRequest = pyqtSignal(int)
     scrollRequest = pyqtSignal(int, int)
     newShape = pyqtSignal()
     selectionChanged = pyqtSignal(bool)
@@ -213,8 +214,6 @@ class Canvas(QWidget):
             self.prevPoint = pos
             self.repaint()
 
-    def wheelEvent(self, ev):
-        print("entered")
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == Qt.RightButton:
@@ -549,7 +548,7 @@ class Canvas(QWidget):
             return self.scale * self.pixmap.size()
         return super(Canvas, self).minimumSizeHint()
 
-    def wheelEvent(self, ev):
+    def wheelEvent(self, ev):        
         qt_version = 4 if hasattr(ev, "delta") else 5
         if qt_version == 4:
             if ev.orientation() == Qt.Vertical:
@@ -564,6 +563,9 @@ class Canvas(QWidget):
             v_delta = delta.y()
 
         mods = ev.modifiers()
+        
+        if int(mods) == 0 and v_delta:
+            self.nextRequest.emit(v_delta)
         if Qt.ControlModifier == int(mods) and v_delta:
             self.zoomRequest.emit(v_delta)
         else:

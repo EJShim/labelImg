@@ -188,6 +188,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         self.canvas = Canvas(parent=self)
         self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.nextRequest.connect(self.nextRequest)
 
         scroll = QScrollArea()
         scroll.setWidget(self.canvas)
@@ -229,8 +230,7 @@ class MainWindow(QMainWindow, WindowMixin):
         openAnnotation = action('&Open Annotation', self.openAnnotationDialog,
                                 'Ctrl+Shift+O', 'open', u'Open Annotation')
 
-        openNextImg = action('&Next Image', self.openNextImg,
-                             'd', 'next', u'Open Next')
+        openNextImg = action('&Next Image', self.openNextImg, 'd', 'next', u'Open Next')
 
         openPrevImg = action('&Prev Image', self.openPrevImg,
                              'a', 'prev', u'Open Prev')
@@ -876,6 +876,14 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def addZoom(self, increment=10):
         self.setZoom(self.zoomWidget.value() + increment)
+
+    def nextRequest(self, delta):
+        if delta < 0:            
+            ##prev            
+            self.openPrevImg()
+        else:            
+            ##Next
+            self.openNextImg()
 
     def zoomRequest(self, delta):
         # get the current scrollbar positions
