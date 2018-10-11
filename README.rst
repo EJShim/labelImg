@@ -14,6 +14,8 @@ LabelImg - DICOM
 
     2018.10.08 : dicom 파일을 -224 ~ 224 로 clip 함. (-224 보다 작은값은 모두 -224, 224  보다 큰 값은 모두 224 로 threshold)
 
+    2018.10.11 : dicom dir 추가 기능 추가 / save directory 는 change savedir 에서 자종험ㅁㅇㄴ, 스크롤 완료
+
     - 추후 할일 : mouse wheel 로 이미지 넘기기?
 
 
