@@ -221,8 +221,7 @@ class MainWindow(QMainWindow, WindowMixin):
         open = action('&Open', self.openFile,
                       'Ctrl+O', 'open', u'Open image or label file')
 
-        opendir = action('&Open Dir', self.openDirDialog,
-                         'Ctrl+u', 'open', u'Open Dir')
+        opendir = action('&Open Dir', self.openDirDialog, 'Ctrl+u', 'open', u'Open Dir')
 
         changeSavedir = action('&Change Save Dir', self.changeSavedirDialog,
                                'Ctrl+r', 'open', u'Change default saved Annotation dir')
@@ -1130,6 +1129,8 @@ class MainWindow(QMainWindow, WindowMixin):
 
     def scanAllImages(self, folderPath):
         extensions = ['.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
+        extensions.append(".dcm")
+        print(extensions)
         images = []
 
         for root, dirs, files in os.walk(folderPath):
@@ -1198,6 +1199,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.filePath = None
         self.fileListWidget.clear()
         self.mImgList = self.scanAllImages(dirpath)
+
         self.openNextImg()
         for imgPath in self.mImgList:
             item = QListWidgetItem(imgPath)
