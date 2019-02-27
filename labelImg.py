@@ -1519,7 +1519,7 @@ def get_main_app(argv=[]):
     """
     app = QApplication(argv)
     app.setApplicationName(__appname__)
-    app.setWindowIcon(newIcon("app"))
+    app.setWindowIcon(newIcon("kistlogo"))
     # Tzutalin 201705+: Accept extra agruments to change predefined class file
     # Usage : labelImg.py image predefClassFile saveDir
     win = MainWindow(argv[1] if len(argv) >= 2 else None,
